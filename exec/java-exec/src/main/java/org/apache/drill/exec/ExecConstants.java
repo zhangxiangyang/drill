@@ -203,6 +203,7 @@ public final class ExecConstants {
   public static final String HAZELCAST_SUBNETS = "drill.exec.cache.hazel.subnets";
   public static final String HTTP_ENABLE = "drill.exec.http.enabled";
   public static final String HTTP_MAX_PROFILES = "drill.exec.http.max_profiles";
+  public static final String HTTP_PROFILES_PER_PAGE = "drill.exec.http.profiles_per_page";
   public static final String HTTP_PORT = "drill.exec.http.port";
   public static final String HTTP_PORT_HUNT = "drill.exec.http.porthunt";
   public static final String HTTP_JETTY_SERVER_ACCEPTORS = "drill.exec.http.jetty.server.acceptors";
@@ -224,6 +225,10 @@ public final class ExecConstants {
   public static final String HTTP_AUTHENTICATION_MECHANISMS = "drill.exec.http.auth.mechanisms";
   public static final String HTTP_SPNEGO_PRINCIPAL = "drill.exec.http.auth.spnego.principal";
   public static final String HTTP_SPNEGO_KEYTAB = "drill.exec.http.auth.spnego.keytab";
+  //Control Web UI Resultset
+  public static final String HTTP_WEB_CLIENT_RESULTSET_AUTOLIMIT_CHECKED = "drill.exec.http.web.client.resultset.autolimit.checked";
+  public static final String HTTP_WEB_CLIENT_RESULTSET_AUTOLIMIT_ROWS = "drill.exec.http.web.client.resultset.autolimit.rows";
+  public static final String HTTP_WEB_CLIENT_RESULTSET_ROWS_PER_PAGE_VALUES = "drill.exec.http.web.client.resultset.rowsPerPageValues";
   //Customize filters in options
   public static final String HTTP_WEB_OPTIONS_FILTERS = "drill.exec.http.web.options.filters";
   public static final String SYS_STORE_PROVIDER_CLASS = "drill.exec.sys.store.provider.class";
@@ -511,6 +516,11 @@ public final class ExecConstants {
       new BooleanValidator(HIVE_OPTIMIZE_MAPRDB_JSON_SCAN_WITH_NATIVE_READER,
           new OptionDescription("Enables Drill to use the Drill native reader (instead of the Hive Serde interface) to optimize reads of MapR Database JSON tables from Hive. Default is false. (Drill 1.14+)"));
 
+  public static final String HIVE_READ_MAPRDB_JSON_TIMESTAMP_WITH_TIMEZONE_OFFSET = "store.hive.maprdb_json.read_timestamp_with_timezone_offset";
+  public static final OptionValidator HIVE_READ_MAPRDB_JSON_TIMESTAMP_WITH_TIMEZONE_OFFSET_VALIDATOR =
+      new BooleanValidator(HIVE_READ_MAPRDB_JSON_TIMESTAMP_WITH_TIMEZONE_OFFSET,
+          new OptionDescription("Enables Drill to read timestamp values with timezone offset when hive plugin is used and Drill native MaprDB JSON reader usage is enabled. (Drill 1.16+)"));
+
   public static final String HIVE_CONF_PROPERTIES = "store.hive.conf.properties";
   public static final OptionValidator HIVE_CONF_PROPERTIES_VALIDATOR = new StringValidator(HIVE_CONF_PROPERTIES,
       new OptionDescription("Enables the user to specify Hive properties at the session level. Do not set the property values in quotes. Separate the property name and value by =. Separate each property with a new line (\\n). Example: set `store.hive.conf.properties` = 'hive.mapred.supports.subdirectories=true\\nmapred.input.dir.recursive=true'. (Drill 1.14+)"));
@@ -563,7 +573,7 @@ public final class ExecConstants {
 
   public static final String EARLY_LIMIT0_OPT_KEY = "planner.enable_limit0_optimization";
   public static final BooleanValidator EARLY_LIMIT0_OPT = new BooleanValidator(EARLY_LIMIT0_OPT_KEY,
-      new OptionDescription("Sets the type of identifier quotes for the SQL parser. Default is backticks ('`'). The SQL parser accepts double quotes ('\"') and square brackets ('['). (Drill 1.11+)"));
+      new OptionDescription("Enables the query planner to determine data types returned by a query during the planning phase before scanning data. Default is true. (Drill 1.9+)"));
 
   public static final String LATE_LIMIT0_OPT_KEY = "planner.enable_limit0_on_scan";
   public static final BooleanValidator LATE_LIMIT0_OPT = new BooleanValidator(LATE_LIMIT0_OPT_KEY,
@@ -898,6 +908,7 @@ public final class ExecConstants {
 
   public static final String RETURN_RESULT_SET_FOR_DDL = "exec.query.return_result_set_for_ddl";
   public static final BooleanValidator RETURN_RESULT_SET_FOR_DDL_VALIDATOR = new BooleanValidator(RETURN_RESULT_SET_FOR_DDL,
-      new OptionDescription("Controls whether to return result set for CREATE TABLE / VIEW, DROP TABLE / VIEW, SET, USE etc. queries. " +
-          "If set to false affected rows count will be returned instead and result set will be null. Default is true. (Drill 1.15+)"));
+      new OptionDescription("Controls whether to return result set for CREATE TABLE / VIEW / FUNCTION, DROP TABLE / VIEW / FUNCTION, " +
+          "SET, USE, REFRESH METADATA TABLE queries. If set to false affected rows count will be returned instead and result set will be null. " +
+          "Affects JDBC connections only. Default is true. (Drill 1.15+)"));
 }

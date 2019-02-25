@@ -50,8 +50,8 @@
     <guava.version>19.0</guava.version>
     <forkCount>2</forkCount>
     <parquet.version>1.10.0</parquet.version>
-    <calcite.version>1.17.0-drill-r2</calcite.version>
-    <avatica.version>1.12.0</avatica.version>
+    <calcite.version>1.18.0-drill-r0</calcite.version>
+    <avatica.version>1.13.0</avatica.version>
     <janino.version>3.0.11</janino.version>
     <sqlline.version>1.6.0</sqlline.version>
     <jackson.version>2.9.5</jackson.version>
@@ -94,6 +94,9 @@
     <docker.repository>drill/apache-drill</docker.repository>
     <antlr.version>4.7.1</antlr.version>
     <lowestMavenVersion>3.3.3</lowestMavenVersion>
+    <commons.net.version>3.6</commons.net.version>
+    <commons.validator.version>1.6</commons.validator.version>
+    <commons.text.version>1.6</commons.text.version>
   </properties>
 
   <scm>
@@ -337,6 +340,8 @@
             <exclude>**/*.log2</exclude>
             <exclude>**/*.sqllog</exclude>
             <exclude>**/*.sqllog2</exclude>
+            <exclude>**/*.syslog</exclude>
+            <exclude>**/*.syslog1</exclude>
             <exclude>**/*.log</exclude>
             <exclude>**/*.css</exclude>
             <exclude>**/*.js</exclude>
@@ -404,7 +409,7 @@
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>7.8.2</version>
+            <version>8.16</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -414,7 +419,7 @@
           <consoleOutput>true</consoleOutput>
           <includeResources>true</includeResources>
           <includeTestResources>true</includeTestResources>
-          <resourceIncludes>**/*.properties,**/*.conf,**/*.json,**/*.xml</resourceIncludes>
+          <resourceIncludes>**/*.properties,**/*.conf,**/*.xml</resourceIncludes>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
           <configLocation>src/main/resources/checkstyle-config.xml</configLocation>
           <suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
@@ -598,6 +603,8 @@
               <exclude>**/*.woff2</exclude>
               <exclude>**/*.ks</exclude>
               <exclude>**/*.pcap</exclude>
+              <exclude>**/*.syslog</exclude>
+              <exclude>**/*.syslog1</exclude>
               <exclude>**/*.props</exclude>
               <exclude>**/*.conf</exclude>
               <exclude>**/*.log</exclude>
@@ -901,7 +908,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.12.1</version> <!--it necessary to solve Checkstyle7.8.2 errors to update it to latest version-->
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -1047,14 +1054,35 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.drill</groupId>
-        <artifactId>drill-shaded-guava</artifactId>
-        <version>${shaded.guava.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
+        <groupId>org.apache.calcite</groupId>
+        <artifactId>calcite-core</artifactId>
+        <version>${calcite.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.calcite.avatica</groupId>
+            <artifactId>avatica-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-jdk1.5</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.calcite.avatica</groupId>
@@ -1074,6 +1102,16 @@
             <groupId>com.google.protobuf</groupId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.drill</groupId>
+        <artifactId>drill-shaded-guava</artifactId>
+        <version>${shaded.guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
       <dependency>
         <groupId>org.msgpack</groupId>
@@ -1701,6 +1739,32 @@
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
         <version>${antlr.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>sqlline</groupId>
+        <artifactId>sqlline</artifactId>
+        <version>${sqlline.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>${commons.net.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-validator</groupId>
+        <artifactId>commons-validator</artifactId>
+        <version>${commons.validator.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>${commons.text.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -2350,44 +2414,6 @@
             <artifactId>xalan</artifactId>
             <version>2.7.1</version>
           </dependency>
-          <dependency>
-            <groupId>sqlline</groupId>
-            <artifactId>sqlline</artifactId>
-            <version>${sqlline.version}</version>
-          </dependency>
-
-          <dependency>
-            <groupId>org.apache.calcite</groupId>
-            <artifactId>calcite-core</artifactId>
-            <version>${calcite.version}</version>
-            <exclusions>
-              <exclusion>
-                <groupId>org.apache.calcite.avatica</groupId>
-                <artifactId>avatica-core</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>org.jgrapht</groupId>
-                <artifactId>jgrapht-jdk1.5</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-              </exclusion>
-              <exclusion>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-              </exclusion>
-              <exclusion>
-                 <groupId>com.fasterxml.jackson.core</groupId>
-                 <artifactId>jackson-core</artifactId>
-              </exclusion>
-              <exclusion>
-                 <groupId>com.fasterxml.jackson.core</groupId>
-                 <artifactId>jackson-databind</artifactId>
-              </exclusion>
-            </exclusions>
-          </dependency>
-
           <dependency>
             <groupId>net.sf.jpam</groupId>
             <artifactId>jpam</artifactId>

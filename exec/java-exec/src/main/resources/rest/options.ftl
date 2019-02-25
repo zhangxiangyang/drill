@@ -52,7 +52,10 @@
             optionValue = $("#"+optionName+" select[name='value']").val();
         } else if (optionKind != "STRING") { //i.e. it is a number (FLOAT/DOUBLE/LONG)
             if (isNaN(optionValue)) {
-                alert(optionValue+" is not a valid number for option: "+optionName);
+                let actualOptionName=optionName.replace(/\\\./gi, ".");
+                let alertValues = {'_numericOption_': optionValue, '_optionName_': actualOptionName };
+                populateAndShowAlert('invalidOptionValue', alertValues);
+                $("#"+optionName+" input[name='value']").focus();
                 return;
             }
         }
@@ -64,18 +67,7 @@
     <link href="/static/css/dataTables.colVis-1.1.0.min.css" rel="stylesheet">
     <link href="/static/css/dataTables.jqueryui.css" rel="stylesheet">
     <link href="/static/css/jquery-ui-1.10.3.min.css" rel="stylesheet">
-<style>
-/* DataTables Sorting: inherited via sortable class */
-table.sortable thead .sorting,.sorting_asc,.sorting_desc {
-  background-repeat: no-repeat;
-  background-position: center right;
-  cursor: pointer;
-}
-/* Sorting Symbols */
-table.sortable thead .sorting { background-image: url("/static/img/black-unsorted.gif"); }
-table.sortable thead .sorting_asc { background-image: url("/static/img/black-asc.gif"); }
-table.sortable thead .sorting_desc { background-image: url("/static/img/black-desc.gif"); }
-</style>
+    <link href="/static/css/drill-dataTables.sortable.css" rel="stylesheet">
 </#macro>
 
 <#macro page_body>
@@ -95,7 +87,7 @@ table.sortable thead .sorting_desc { background-image: url("/static/img/black-de
   <button type="button" class="btn btn-info" onclick="inject(this.innerHTML);">${filter}</button>
   </#list>
   </div>
-
+  <#include "*/alertModals.ftl">
   <div class="table-responsive">
     <table id='optionsTbl' class="table table-striped table-condensed display sortable" style="table-layout: auto; width=100%;">
       <thead>

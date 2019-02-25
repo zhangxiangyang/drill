@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.apache.drill.categories.RowSetTests;
 import org.apache.drill.common.types.TypeProtos.DataMode;
 import org.apache.drill.common.types.TypeProtos.MinorType;
 import org.apache.drill.exec.physical.rowSet.ResultSetLoader;
@@ -35,10 +36,12 @@ import org.apache.drill.exec.vector.accessor.ScalarWriter;
 import org.apache.drill.test.SubOperatorTest;
 import org.apache.drill.test.rowSet.RowSet;
 import org.apache.drill.test.rowSet.RowSet.SingleRowSet;
-import org.apache.drill.test.rowSet.RowSetComparison;
 import org.apache.drill.test.rowSet.RowSetReader;
+import org.apache.drill.test.rowSet.RowSetUtilities;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(RowSetTests.class)
 public class TestResultSetSchemaChange extends SubOperatorTest {
 
   /**
@@ -149,8 +152,7 @@ public class TestResultSetSchemaChange extends SubOperatorTest {
         .addRow("a_10",  10, "c_10", "d_10", 100, strArray("f_10-1", "f_10-2"))
         .build();
 
-    new RowSetComparison(expected)
-        .verifyAndClearAll(actual);
+    RowSetUtilities.verify(expected, actual);
     rsLoader.close();
   }
 
